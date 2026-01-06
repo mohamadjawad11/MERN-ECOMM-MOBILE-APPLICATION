@@ -1,0 +1,14 @@
+Connecting to MongoDB:
+1)create a project in MongoDB with a cluster
+2)copy the url conection and put it inside a variable in the .env file
+3)inside the config folder create a file named db.js which will hadle the function that connects to MongoDB
+4)add console logs with dotenv and call the function created in db.js to make sure it is working
+
+
+Clerk Implementation And Notes:
+1) create an application in Clerk
+2) copy the .env and paste it in vscode (publishable key) if I am setting up an admin pannel
+3) npm install @clerk/express
+4) copy publishable and secret key from quick start (choose express)
+5) import the clerk middleware in the server.js and put app.use(clerkMiddleware());
+
