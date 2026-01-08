@@ -1,16 +1,22 @@
 import express from 'express';
 import { connectDB } from './config/db.js';
 import dotenv from 'dotenv';
-import { clerkMiddleware } from '@clerk/nextjs/server'
+import { clerkMiddleware } from '@clerk/express';
+import { serve } from 'inngest/express';
+import { inngest,inngestFunctions } from './config/inngest.js';
 
 dotenv.config();
 
+const PORT = process.env.PORT || 3000;
+
 const app = express();
 
-// add auth object to the request
+// from the documentation of inngest
+app.use(express.json());
 app.use(clerkMiddleware()); 
 
-const PORT = process.env.PORT || 3000;
+// from the documentation of inngest to serve inngest functions
+app.use('/api/inngest',serve({client: inngest, functions: inngestFunctions}));
 
 
 app.get("/", (req, res) => {
@@ -25,6 +31,3 @@ const startServer = async () => {
   });
 }
 startServer();
-
-
-
