@@ -5,6 +5,8 @@ import { clerkMiddleware } from '@clerk/express';
 import { serve } from 'inngest/express';
 import { inngest,inngestFunctions } from './config/inngest.js';
 
+
+
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
@@ -17,6 +19,7 @@ app.use(clerkMiddleware());
 
 // from the documentation of inngest to serve inngest functions
 app.use('/api/inngest',serve({client: inngest, functions: inngestFunctions}));
+// app.use("api/admin",adminRoutes);
 
 
 app.get("/", (req, res) => {
