@@ -30,7 +30,6 @@ const syncClerkUsers = inngest.createFunction(
 
 
 
-
 const deleteClerkUsers = inngest.createFunction(
     // customized id can be anything
     {id:"Delete Clerk Users"},

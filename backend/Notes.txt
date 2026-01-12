@@ -11,4 +11,19 @@ Clerk Implementation And Notes:
 3) npm install @clerk/express
 4) copy publishable and secret key from quick start (choose express)
 5) import the clerk middleware in the server.js and put app.use(clerkMiddleware());
+6)use clerk provider in the frontend if needed in the main.jsx
+7)I will use clerk with inngest which will be as a webhook that will work to save the user in the mongodb
+
+
+
+Inngest with clerk:
+1)inside clerk connect to inngest then click on the create button in Clerk
+2)in clerk click on edit and choose the user created edited deleted
+3)in backend folder install npm i inngest
+
+
+Cloudinary:
+1)create a project and find the cloud name and public and secrete credentials
+2)put the 3 variables in the .env
+3)create a file named cloudinary.js in the config folder and initiate it
 
