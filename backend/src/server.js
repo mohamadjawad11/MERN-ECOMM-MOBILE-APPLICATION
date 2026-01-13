@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import { clerkMiddleware } from '@clerk/express';
 import { serve } from 'inngest/express';
 import { inngest,inngestFunctions } from './config/inngest.js';
+import adminRoutes from './routes/admin.route.js';
+import userRoutes from './routes/user.route.js';
 
 
 
@@ -19,7 +21,8 @@ app.use(clerkMiddleware());
 
 // from the documentation of inngest to serve inngest functions
 app.use('/api/inngest',serve({client: inngest, functions: inngestFunctions}));
-// app.use("api/admin",adminRoutes);
+app.use("api/admin",adminRoutes);
+app.use("/api/users",userRoutes);
 
 
 app.get("/", (req, res) => {

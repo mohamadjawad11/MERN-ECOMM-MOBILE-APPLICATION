@@ -89,7 +89,7 @@ export async function updateProduct(req,res){
     }
 }
 
-export async function getAllOrders(req,res){
+export async function getAllOrders(_,res){
     try {
         // populate means to fetch related user details along with orders
         const orders=await Order.find().populate("user","name email")
