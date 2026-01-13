@@ -18,21 +18,27 @@ export async function createOrder(req,res){
                 return res.status(400).json({message:`Insufficient stock for product ${product.name}`});
             }
         }
-        //create order
-        const order=new Order({
-            user:user._id,
-            orderItems,
-            shippingAddress,
-            paymentResult,
-            totalPrice,
-        });
-        //reduce stock
-        for(const item of orderItems){
-            const product=await Product.findById(item.product._id);
-            product.stock-=item.quantity;
-            await product.save();
-        }
-        const createdOrder=await order.save();
+//create order
+const order=new Order({
+    user:user._id,
+    orderItems,
+    shippingAddress,
+    paymentResult,
+    totalPrice,
+});
+//reduce stock atomically with stock check
+for(const item of orderItems){
+    const result = await Product.findOneAndUpdate(
+        { _id: item.product._id, stock: { $gte: item.quantity } },
+        { $inc: { stock: -item.quantity } },
+        { new: true }
+    );
+    if (!result) {
+        // Rollback previously decremented items or use transactions
+        return res.status(400).json({ message: `Insufficient stock or product not found` });
+    }
+}
+const createdOrder=await order.save();
         return res.status(201).json({message:"Order created successfully",order:createdOrder});
     } catch (error) {
         console.error("Error creating order:", error);
@@ -42,15 +48,15 @@ export async function createOrder(req,res){
 
 export async function getUserOrders(req,res){
     try {
-        const {orders}=await Order.find({clerkId:req.user.clerkId}).populate("orderItems.product").sort({createdAt:-1});
+        const orders = await Order.find({ user: req.user._id }).populate("orderItems.product").sort({ createdAt: -1 });
 
-        const orderWithReviewStatus=orders.map(async (order)=>{
+        const orderWithReviewStatus = await Promise.all(orders.map(async (order) => {
             const review=await Review.findOne({orderId:order._id});
             return {
                 ...order._doc,
                 isReviewed:review ? true : false,
             };
-        });
+        }));
         return res.status(200).json({orders:orderWithReviewStatus});
     } catch (error) {
         console.error("Error fetching user orders:", error);
