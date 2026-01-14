@@ -23,7 +23,7 @@ app.use(clerkMiddleware());
 
 // from the documentation of inngest to serve inngest functions
 app.use('/api/inngest',serve({client: inngest, functions: inngestFunctions}));
-app.use("api/admin",adminRoutes);
+app.use("/api/admin",adminRoutes);
 app.use("/api/users",userRoutes);
 app.use("/api/orders",orderRoutes);
 app.use("/api/reviews",reviewRoutes);

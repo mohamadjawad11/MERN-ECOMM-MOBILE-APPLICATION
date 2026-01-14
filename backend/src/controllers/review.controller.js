@@ -40,19 +40,20 @@ export async function createReview(req,res){
       { new: true, upsert: true, runValidators: true }
     );
 
-    // update the product rating with atomic aggregation
-    const reviews = await Review.find({ productId });
-    const totalRating = reviews.reduce((sum, rev) => sum + rev.rating, 0);
+    // update the product rating atomically using aggregation
+    const stats = await Review.aggregate([
+      { $match: { productId: new mongoose.Types.ObjectId(productId) } },
+      { $group: { _id: null, avgRating: { $avg: "$rating" }, count: { $sum: 1 } } }
+    ]);
+    
+    const { avgRating = 0, count = 0 } = stats[0] || {};
     const updatedProduct = await Product.findByIdAndUpdate(
       productId,
-      {
-        averageRating: totalRating / reviews.length,
-        totalReviews: reviews.length,
-      },
+      { averageRating: avgRating, totalReviews: count },
       { new: true, runValidators: true }
     );
 
-    if (!updatedProduct) {
+    if (!updatedProduct) {      
       await Review.findByIdAndDelete(review._id);
       return res.status(404).json({ error: "Product not found" });
     }
